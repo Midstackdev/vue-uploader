@@ -1,15 +1,16 @@
 <template>
   <div id="app" class="container">
-    Home
+    <Uploader />
   </div>
 </template>
 
 <script>
+import Uploader from '@/uploader/components/Uploader'
 
 export default {
   name: 'App',
   components: {
-    
+    Uploader
   }
 }
 </script>
