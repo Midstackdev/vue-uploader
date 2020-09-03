@@ -1,6 +1,10 @@
 <template>
   <div id="app" class="container">
-    <Uploader />
+    <Uploader 
+      :options="{
+        baseURL: 'http://saas.test/api'
+      }"
+    />
   </div>
 </template>
 
