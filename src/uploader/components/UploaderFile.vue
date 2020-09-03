@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white rounded-lg p-4 flex items-stretch mb-1">
         <div>
-            progress
+            {{progress}}
         </div>
         <div class="flex flex-col justify-between">
             <div class="mb-2">
@@ -28,6 +28,22 @@
             upload: {
                 required: true,
                 type: Object
+            },
+
+            baseURL: {
+                required: true,
+                type: String
+            },
+
+            endpoint: {
+                required: true,
+                // type: String
+            }
+        },
+
+        data () {
+            return {
+                progress: 0
             }
         },
 
@@ -35,6 +51,10 @@
             sizeDisplay () {
                 return (this.upload.file.size / 1000000).toFixed(2)
             }
+        },
+
+        mounted () {
+            console.log(this.endpoint)
         }
     }
 </script>

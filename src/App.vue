@@ -4,6 +4,11 @@
       :options="{
         baseURL: 'http://saas.test/api'
       }"
+      :handlers="{
+       'video/mp4': {
+          endpoint: 'uploads/video'
+       }
+      }"
     />
   </div>
 </template>

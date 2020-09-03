@@ -7,13 +7,17 @@
             v-for="(upload, index) in uploads"
             :key="index"
             :upload="upload"
+            :baseURL="options.baseURL"
+            :endpoint="determineEndpointFor(upload.file.type)"
         />
     </div>
 </template>
 
 <script>
+    import options from '@/uploader/options'
     import UploaderForm from './UploaderForm'
     import UploaderFile from './UploaderFile'
+    import get from 'lodash.get'
 
     export default {
         components: {
@@ -25,11 +29,12 @@
             options: {
                 required: false,
                 type: Object,
-                default () {
-                    return {
-                        baseURL: ''
-                    }
-                }
+                default: () => options
+            },
+
+            handlers: {
+                required: true,
+                type: Object
             }
         },
 
@@ -53,7 +58,11 @@
                     }
                 }))
 
-                console.log(this.uploads)
+                // console.log(this.uploads)
+            },
+
+            determineEndpointFor (fileType) {
+                return get(this.handlers[fileType], 'endpoint', null)
             }
         }
     }
