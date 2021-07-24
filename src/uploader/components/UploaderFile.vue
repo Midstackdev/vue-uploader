@@ -15,14 +15,18 @@
             </div>
 
             <div class="text-gray-600 text-sm align-baseline">
-                Cancelled
+                <template v-if="state === states.WAITING">Waiting</template>
+                <template v-if="state === states.UPLOADING">Uploading</template>
+                <template v-if="state === states.UNSUPPORTED">Sorry this file is unsupported</template>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    
+    import states from '@/uploader/states'
+    import axios from 'axios'
+
     export default {
         props: {
             upload: {
@@ -43,7 +47,9 @@
 
         data () {
             return {
-                progress: 0
+                progress: 0,
+                state: null,
+                states,
             }
         },
 
@@ -53,8 +59,29 @@
             }
         },
 
+        methods: {
+            makeFormData (file) {
+                const form = new FormData()
+                form.append('file', file, file.name)
+                return form
+            },
+
+            startUpload () {
+                this.state = states.UPLOADING
+
+                axios.post(this.endpoint, this.makeFormData(this.upload.file), {
+                    baseURL: this.baseURL
+                })
+            }
+        },
+
         mounted () {
-            console.log(this.endpoint)
+            if (this.endpoint === null) {
+                return this.state = states.UNSUPPORTED
+            }
+            this.state = states.WAITING
+
+            this.startUpload()
         }
     }
 </script>

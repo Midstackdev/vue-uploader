@@ -2,7 +2,7 @@
   <div id="app" class="container">
     <Uploader 
       :options="{
-        baseURL: 'http://saas.test/api'
+        baseURL: 'http://lavel.test/api'
       }"
       :handlers="{
        'video/mp4': {
