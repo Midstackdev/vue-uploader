@@ -65,7 +65,7 @@
                 }
 
                 let uploads = this.uploads.filter(upload => !upload.cancelled && !upload.failed)
-                
+
                 if(uploads.length === 0) {
                     return 0
                 }
@@ -130,16 +130,29 @@
                         complete: false,
                         cancelled: false,
                         failed: false,
+                        queued: true,
                         file
                     }
                 }))
-
-                // console.log(this.uploads)
             },
 
             determineEndpointFor (fileType) {
                 return get(this.handlers[fileType], 'endpoint', null)
             }
+        },
+
+        mounted () {
+            setInterval(() => {
+                if(this.currentUploadCount >= this.options.maxConcurrentUploads) {
+                    return
+                }
+                
+                let queued = this.uploads.filter((upload) => upload.queued === true)
+
+                if(queued.length) {
+                    queued[0].queued = false
+                }
+            }, 1000)
         }
     }
 </script>

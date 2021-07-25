@@ -2,7 +2,8 @@
   <div id="app" class="container">
     <Uploader 
       :options="{
-        baseURL: 'http://lavel.test/api'
+        baseURL: 'http://lavel.test/api',
+        maxConcurrentUploads: 1
       }"
       :handlers="{
        'video/mp4': {
