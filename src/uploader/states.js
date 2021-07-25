@@ -3,6 +3,6 @@ export default {
 	UPLOADING: 1,
 	FAILED: 2,
 	UNSUPPORTED: 3,
-	COMPLETE: 4,
+	COMPLETED: 4,
 	CANCELLED: 5,
 }

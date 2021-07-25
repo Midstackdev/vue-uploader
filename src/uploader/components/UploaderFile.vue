@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white rounded-lg p-4 flex items-stretch mb-1">
         <div>
-            {{progress}}
+            <UploadProgress :progress="progress"/>
         </div>
         <div class="flex flex-col justify-between">
             <div class="mb-2">
@@ -16,8 +16,17 @@
 
             <div class="text-gray-600 text-sm align-baseline">
                 <template v-if="state === states.WAITING">Waiting</template>
-                <template v-if="state === states.UPLOADING">Uploading</template>
+                <template v-if="state === states.COMPLETED">Complete</template>
+                <template v-if="state === states.FAILED">Failed</template>
+                <template v-if="state === states.CANCELLED">Cancelled</template>
                 <template v-if="state === states.UNSUPPORTED">Sorry this file is unsupported</template>
+                <template v-if="state === states.UPLOADING">
+                    <a 
+                    href="#"
+                    class="text-blue-500"
+                    @click.prevent="cancel" 
+                    >Cancel</a>
+                </template>
             </div>
         </div>
     </div>
@@ -26,8 +35,12 @@
 <script>
     import states from '@/uploader/states'
     import axios from 'axios'
+    import UploadProgress from './UploadProgress'
 
     export default {
+        components: {
+            UploadProgress
+        },
         props: {
             upload: {
                 required: true,
@@ -49,6 +62,9 @@
             return {
                 progress: 0,
                 state: null,
+                axios: {
+                    cancel: null
+                },
                 states,
             }
         },
@@ -60,17 +76,35 @@
         },
 
         methods: {
+            cancel () {
+                this.axios.cancel()
+            },
             makeFormData (file) {
                 const form = new FormData()
                 form.append('file', file, file.name)
                 return form
             },
 
+            handleUploadProgress (e) {
+                this.progress = Math.round((e.loaded * 100) / e.total)
+            },
+
             startUpload () {
                 this.state = states.UPLOADING
 
                 axios.post(this.endpoint, this.makeFormData(this.upload.file), {
-                    baseURL: this.baseURL
+                    baseURL: this.baseURL,
+                    onUploadProgress: this.handleUploadProgress,
+                    cancelToken: new axios.CancelToken((token) => {
+                        this.axios.cancel = token
+                    })
+                }).then(() => {
+                    this.state = states.COMPLETED
+                }).catch((e) => {
+                    if(e instanceof axios.Cancel) {
+                        return this.state = states.CANCELLED
+                    }
+                    this.state = states.FAILED
                 })
             }
         },
